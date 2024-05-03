@@ -12,24 +12,25 @@ const refs = {
 };
 
 // const country_list = document.querySelector('.country-list');
-
+// funkcja, która czyści elementy w html
 const clearMarkup = ref => (ref.innerHTML = '');
 
 const inputHandler = e => {
+  // metoda trim pozbywa się znaków biłaych, tabulatorów, itd., znaków które mogłyby przeszkodzić w wyszukiwaniu danych
   const textInput = e.target.value.trim();
-
+  // jeżeli tekstInput jest pusty, to wyczyć ul i div
   if (!textInput) {
     clearMarkup(refs.countryList);
     clearMarkup(refs.countryInfo);
     return;
   }
-
+  // wysyłam fetchCountries - przeszukiwanie krajów, w odpowiedzi otrzymam obiekt lub tablicę obiektów
   fetchCountries(textInput)
     .then(data => {
       console.log(data);
+      // jeżeli dane mają więcej niż 10 elementów, to dostaję odpowiedź
       if (data.length > 10) {
-        clearMarkup(refs.countryList);
-        clearMarkup(refs.countryInfo);
+        // metoda do otrzymania boxa z informacją
         Notify.info(
           'Too many matches found. Please enter a more specific name'
         );
@@ -45,6 +46,7 @@ const inputHandler = e => {
 };
 
 const renderMarkup = data => {
+  // jeżeli długość podanych danych jest równa 1 to wyświetl dane dla wskazanego kraju zgodnie z funkcją createInfoMarkup
   if (data.length === 1) {
     clearMarkup(refs.countryList);
     const markupInfo = createInfoMarkup(data);
@@ -55,7 +57,7 @@ const renderMarkup = data => {
     refs.countryList.innerHTML = markupList;
   }
 };
-
+// funkcja, która przygotuje html i wyświetli listę
 const createListMarkup = data => {
   return data
     .map(
@@ -65,6 +67,7 @@ const createListMarkup = data => {
     .join('');
 };
 
+// funkcja, która wyświetli pojedynczy kraj z pełnymi informacjami
 const createInfoMarkup = data => {
   return data.map(
     ({ name, capital, population, flags, languages }) =>
@@ -76,4 +79,5 @@ const createInfoMarkup = data => {
   );
 };
 
+// nadanie opóźnienia
 refs.searchEl.addEventListener('input', debounce(inputHandler, DEBOUNCE_DELAY));
